@@ -1,0 +1,289 @@
+
+██████  ███████ ███████  █████  ███████ ██  ██████       ██
+██   ██ ██      ██      ██   ██ ██      ██ ██    ██     ███
+██   ██ █████   ███████ ███████ █████   ██ ██    ██      ██
+██   ██ ██           ██ ██   ██ ██      ██ ██    ██      ██
+██████  ███████ ███████ ██   ██ ██      ██  ██████       ██
+
+1) CREATE DATABASE movies
+
+2)
+
+mati=# \c movies
+You are now connected to database "movies" as user "mati".
+
+3)
+
+movies=# CREATE TABLE movietable(
+movies(# name varchar(64),
+movies(# id SERIAL);
+CREATE TABLE
+LINE 1: SELECT * FROM movies;
+                     ^
+movies=# SELECT * FROM movietable;
+name | id
+------+----
+(0 rows)
+
+4)
+                              ^
+movies=# INSERT INTO movietable (name) values ('El Rey León');
+INSERT 0 1
+movies=# SELECT * FROM movietable;
+   name     | id
+-------------+----
+El Rey León |  1
+(1 row)
+
+5)
+
+movies=# INSERT INTO movietable (name) values ('Terminator II');
+INSERT 0 1
+movies=# SELECT * FROM movietable;
+    name      | id
+---------------+----
+El Rey León   |  1
+Terminator II |  2
+(2 rows)
+
+6)
+
+movies=# ALTER TABLE movietable ADD COLUMN year integer;
+ALTER TABLE
+movies=# SELECT * FROM movietable;
+    name      | id | year
+---------------+----+------
+El Rey León   |  1 |
+Terminator II |  2 |
+(2 rows)
+
+7)
+
+movies=# ALTER TABLE movietable ADD COLUMN genre varchar(64);
+ALTER TABLE
+movies=# SELECT * FROM movietable;
+    name      | id | year | genre
+---------------+----+------+-------
+El Rey León   |  1 |      |
+Terminator II |  2 |      |
+(2 rows)
+
+8)
+
+movies=# UPDATE movietable SET year = 1984;
+UPDATE 2
+movies=# SELECT * FROM movietable;
+    name      | id | year | genre
+---------------+----+------+-------
+El Rey León   |  1 | 1984 |
+Terminator II |  2 | 1984 |
+(2 rows)
+
+9)
+
+movies=# UPDATE movietable SET genre = 'Drama';
+UPDATE 2
+movies=# SELECT * FROM movietable;
+    name      | id | year | genre
+---------------+----+------+-------
+El Rey León   |  1 | 1984 | Drama
+Terminator II |  2 | 1984 | Drama
+(2 rows)
+
+10)
+
+movies=# DELETE FROM movietable where name = 'Terminator II';
+DELETE 1
+movies=# SELECT * FROM movietable;
+   name     | id | year | genre
+-------------+----+------+-------
+El Rey León |  1 | 1984 | Drama
+(1 row)
+
+11)
+
+movies=# INSERT INTO movietable (name, year, genre) values ('El crimen perfecto',1984, 'Drama');
+INSERT 0 1
+movies=# SELECT * FROM movietable;
+       name        | id | year | genre
+--------------------+----+------+-------
+El Rey León        |  1 | 1984 | Drama
+El crimen perfecto |  3 | 1984 | Drama
+(2 rows)
+
+
+
+
+██████  ███████ ███████  █████  ███████ ██  ██████      ██████
+██   ██ ██      ██      ██   ██ ██      ██ ██    ██          ██
+██   ██ █████   ███████ ███████ █████   ██ ██    ██      █████
+██   ██ ██           ██ ██   ██ ██      ██ ██    ██     ██
+██████  ███████ ███████ ██   ██ ██      ██  ██████      ███████
+
+
+
+2)
+
+movies=# SELECT name FROM movietable ORDER BY name ASC LIMIT  3;
+        name
+---------------------
+ El crimen perfecto
+ El rey león
+ El viaje de Chihiro
+(3 rows)
+
+
+3)
+
+movies=# SELECT * FROM movietable ORDER BY year DESC  LIMIT  3;
+      name      | id | year |   genre
+----------------+----+------+-----------
+ Toy Story 3    |  6 | 2010 | Aventuras
+ Up             |  8 | 2009 | Aventuras
+ Los increibles |  5 | 2004 | Accion
+(3 rows)
+
+4)
+
+movies=# SELECT count(name) FROM movietable
+movies-# ;
+ count
+-------
+     7
+(1 row)
+
+movies=#
+
+5)
+
+movies=# SELECT year, count(year) FROM movietable GROUP BY year;
+ year | count
+------+-------
+ 2009 |     1
+ 2003 |     1
+ 1984 |     2
+ 2004 |     1
+ 2010 |     1
+ 2001 |     1
+(6 rows)
+
+movies=#
+
+6 y 7)
+
+movies=# UPDATE movietable SET categoria = 'familiar' WHERE genre = 'Comedia';
+UPDATE 1
+movies=# SELECT * FROM movietable
+;
+        name         | id | year |   genre   | categoria
+---------------------+----+------+-----------+-----------
+ El crimen perfecto  |  3 | 1984 | Drama     | +14
+ El viaje de Chihiro |  4 | 2003 | Fantasia  | +14
+ Los increibles      |  5 | 2004 | Accion    | +14
+ Toy Story 3         |  6 | 2010 | Aventuras | +14
+ Up                  |  8 | 2009 | Aventuras | +14
+ El rey león         |  1 | 1984 | Drama     | +14
+ Monsters, Inc.      |  7 | 2001 | Comedia   | familiar
+(7 rows)
+
+movies=# UPDATE movietable SET categoria = 'familiar' WHERE genre = 'Fantasia';
+UPDATE 1
+movies=# SELECT * FROM movietable
+;
+        name         | id | year |   genre   | categoria
+---------------------+----+------+-----------+-----------
+ El crimen perfecto  |  3 | 1984 | Drama     | +14
+ Los increibles      |  5 | 2004 | Accion    | +14
+ Toy Story 3         |  6 | 2010 | Aventuras | +14
+ Up                  |  8 | 2009 | Aventuras | +14
+ El rey león         |  1 | 1984 | Drama     | +14
+ Monsters, Inc.      |  7 | 2001 | Comedia   | familiar
+ El viaje de Chihiro |  4 | 2003 | Fantasia  | familiar
+(7 rows)
+
+movies=# UPDATE movietable SET categoria = 'niños' WHERE genre = 'Aventuras';
+UPDATE 2
+movies=# SELECT * FROM movietable
+;
+        name         | id | year |   genre   | categoria
+---------------------+----+------+-----------+-----------
+ El crimen perfecto  |  3 | 1984 | Drama     | +14
+ Los increibles      |  5 | 2004 | Accion    | +14
+ El rey león         |  1 | 1984 | Drama     | +14
+ Monsters, Inc.      |  7 | 2001 | Comedia   | familiar
+ El viaje de Chihiro |  4 | 2003 | Fantasia  | familiar
+ Toy Story 3         |  6 | 2010 | Aventuras | niños
+ Up                  |  8 | 2009 | Aventuras | niños
+(7 rows)
+
+movies=# UPDATE movietable SET categoria = 'adultos' WHERE genre = 'Drama';
+UPDATE 2
+movies=# UPDATE movietable SET categoria = 'adultos' WHERE genre = 'Accion';
+UPDATE 1
+movies=# UPDATE movietable SET categoria = 'adultos' WHERE genre = 'Drama';
+UPDATE 2
+movies=# SELECT * FROM movietable
+;
+        name         | id | year |   genre   | categoria
+---------------------+----+------+-----------+-----------
+ Monsters, Inc.      |  7 | 2001 | Comedia   | familiar
+ El viaje de Chihiro |  4 | 2003 | Fantasia  | familiar
+ Toy Story 3         |  6 | 2010 | Aventuras | niños
+ Up                  |  8 | 2009 | Aventuras | niños
+ Los increibles      |  5 | 2004 | Accion    | adultos
+ El crimen perfecto  |  3 | 1984 | Drama     | adultos
+ El rey león         |  1 | 1984 | Drama     | adultos
+(7 rows)
+
+
+8)
+
+movies=# SELECT categoria, count(categoria) FROM  movietable
+movies-# GROUP BY categoria;
+ categoria | count
+-----------+-------
+ niños     |     2
+ familiar  |     2
+ adultos   |     3
+(3 rows)
+
+
+██████  ███████ ███████  █████  ███████ ██  ██████      ██████
+██   ██ ██      ██      ██   ██ ██      ██ ██    ██          ██
+██   ██ █████   ███████ ███████ █████   ██ ██    ██      █████
+██   ██ ██           ██ ██   ██ ██      ██ ██    ██          ██
+██████  ███████ ███████ ██   ██ ██      ██  ██████      ██████
+
+*** EL DESAFIO 3 PIDE COMO REQUISITO TENER HECHOS LOS DESAFIOS 1 Y 2 ***
+
+* ) Crear un usuario nuevo en la base de datos.
+
+movies=# CREATE USER usuario1;
+CREATE ROLE
+
+movies=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ mati      | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ usuario1  |                                                            | {}
+
+
+* ) Asignarle un rol que sólo permite hacer consultas select (no podrá ingresar).
+
+movies=# GRANT SELECT ON movietable TO usuario1;
+GRANT
+movies=# ALTER ROLE usuario1 WITH LOGIN;
+ALTER ROLE
+
+* ) Cambiar de usuario en la base de datos.
+
+movies=# SET ROLE usuario1;
+SET
+
+* ) Probar que no puede ingresar una película
+
+movies=> INSERT INTO movietable (name,year, genre, categoria) VALUES(
+movies(> 'Spider man', 2001, 'drama', 'adultos');
+ERROR:  permission denied for table movietable
+movies=>
