@@ -1,0 +1,6 @@
+1) SELECT * FROM facilities
+2) SELECT name, membercost FROM facilities
+3) SELECT name, membercost, monthlymaintenance FROM facilities WHERE membercost != 0
+4) SELECT id, name, membercost, monthlymaintenance HAVING monthlymaintenance / 50 > membercost
+5) SELECT * FROM facilities WHERE name LIKE '%tenis%'
+6) SELECT * FROM facilities WHERE id = 5 AND id = 1

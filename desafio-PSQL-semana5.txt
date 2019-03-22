@@ -1,0 +1,133 @@
+* ) Crear base de datos
+
+mati=# CREATE DATABASE call_list;
+CREATE DATABASE
+mati=# \c call_list
+You are now connected to database "call_list" as user "mati".
+
+* ) En la base de datos recien creada, crear la tabla users con los campos id (clave primaria),
+first_name, email.
+
+call_list=# CREATE TABLE users(
+call_list(# id SERIAL PRIMARY KEY,
+call_list(# name varchar(30),
+call_list(# mail varchar(50));
+CREATE TABLE
+call_list=# SELECT * FROM users;
+ id | name | mail
+----+------+------
+(0 rows)
+
+* ) Ingresar un usuario carlos y Laura
+
+call_list=# INSERT INTO users (name, mail) VALUES ('Carlos','carlitros@gmail.com'),('Laura','lauritax@gmail.com');
+INSERT 0 2
+call_list=# SELECT * FROM users;
+ id |  name  |        mail
+----+--------+---------------------
+  1 | Carlos | carlitros@gmail.com
+  2 | Laura  | lauritax@gmail.com
+(2 rows)
+
+
+* ) Crear una tabla llamada calls
+
+call_list=# CREATE TABLE calls (
+call_list(# id SERIAL PRIMARY KEY,
+call_list(# phone varchar(20),
+call_list(# date varchar(30),
+call_list(# user_id integer REFERENCES users(id),
+call_list(# length integer);
+CREATE TABLE
+call_list=# SELECT * FROM calls;
+ id | phone | date | user_id | length
+----+-------+------+---------+--------
+(0 rows)
+
+* ) Agregar a la tabla users el campo last_name.
+
+call_list=# ALTER TABLE users ADD COLUMN last_name varchar(30);
+ALTER TABLE
+call_list=# SELECT * FROM users;
+ id |  name  |        mail         | last_name
+----+--------+---------------------+-----------
+  1 | Carlos | carlitros@gmail.com |
+  2 | Laura  | lauritax@gmail.com  |
+(2 rows)
+
+
+* ) ingresar apellidos a los usuarios
+
+call_list=# UPDATE users SET last_name = 'Santana' WHERE name = 'Carlos';
+UPDATE 1
+call_list=# SELECT * FROM users;
+ id |  name  |        mail         | last_name
+----+--------+---------------------+-----------
+  2 | Laura  | lauritax@gmail.com  |
+  1 | Carlos | carlitros@gmail.com | Santana
+(2 rows)
+
+call_list=# UPDATE users SET last_name = 'Perez' WHERE name = 'Laura';
+UPDATE 1
+call_list=# SELECT * FROM users;
+ id |  name  |        mail         | last_name
+----+--------+---------------------+-----------
+  1 | Carlos | carlitros@gmail.com | Santana
+  2 | Laura  | lauritax@gmail.com  | Perez
+(2 rows)
+
+
+* ) Ingresar llamados a usuarios (6 laura, 4 carlos)
+
+call_list=# INSERT INTO calls (phone, date, user_id, length) VALUES(
+call_list(#  '73485772','23/12', 1,'107'),(
+call_list(#  '85739994','14/03', 1,'200'),(
+call_list(#  '68395991','29/11', 1, '10'),(
+call_list(#  '58762746','03/09', 1, '40');
+INSERT 0 4
+
+
+call_list=# INSERT INTO calls (phone, date, user_id, length) VALUES(
+ '69584712','25/12', 2,'60'),(
+ '67581828','18/09', 2,'120'),(
+ '68417855','11/04', 2, '60'),(
+ '67586881','06/02', 2, '5'),(
+call_list(# '23345678', '19/03', 2, '55'),(
+call_list(# '68549387', '22/01', 2, '200');
+INSERT 0 6
+
+* ) Crear un nuevo usuario.
+
+call_list=# INSERT INTO users (name, mail, last_name) VALUES (
+call_list(# 'Pepito', 'pepito@grillo.com', 'Grillo');
+INSERT 0 1
+call_list=# SELECT * FROM users;
+ id |  name  |        mail         | last_name
+----+--------+---------------------+-----------
+  1 | Carlos | carlitros@gmail.com | Santana
+  2 | Laura  | lauritax@gmail.com  | Perez
+  3 | Pepito | pepito@grillo.com   | Grillo
+(3 rows)
+
+
+* ) Seleccionar la cantidad de llamados de cada uno de los usuarios (nombre de usuario y
+cantidad de llamadas).
+
+call_list=# SELECT name ,count(user_id) FROM users INNER JOIN calls ON (users.id = calls.user_id) GROUP BY name;
+  name  | count
+--------+-------
+ Carlos |     4
+ Laura  |     6
+(2 rows)
+
+
+* ) Obtener el usuario con mayor número de llamadas
+
+call_list=# SELECT name ,count(user_id) FROM users INNER JOIN calls ON (users.id = calls.user_id) GROUP BY name ORDER BY name DESC LIMIT 1;
+ name  | count
+-------+-------
+ Laura |     6
+(1 row)
+
+* ) Seleccionar los llamados del usuario llamado Carlos ordenados por fecha en orden
+descendente.
